@@ -10,7 +10,7 @@
 
 body {
 	font-family: helvetica;
-	font-size: 20px;
+	font-size: 25px;
 }
 
 .countries {
@@ -47,9 +47,81 @@ button {
 </style>
 
 <body>
-<script>
+	<div id="option">
+    <button onclick="updateData(1800)">1800</button>
+    <button onclick="updateData(1850)">1850</button>
+    <button onclick="updateData(1900)">1900</button>
+    <button onclick="updateData(1950)">1950</button>
+    <button onclick="updateData(2000)">2000</button>
+	</div>
 
+	<script>
 
+	// Layout dimensions, variables and functions 
+	var w = 1220,
+			h = 600,
+			margins = {top: 10, right: 10, bottom: 20, left: 10},
+
+			scale = 180, //projection scale
+			radiusscale = 30;		
+
+	var radius = d3.scaleSqrt() //Used to scale the size of proportional circles on the map.
+	    .domain([0, 34250])
+	    .range([0, radiusscale]);
+
+	d3.select("body")
+		.append("svg")
+		  .attr("id", "map")
+		  .attr("width", w)
+		  .attr("height", h)
+		    .attr("transform", "translate("+ margins.left +", "+margins.top+")");
+
+	var projection = d3.geoMollweide();
+		  
+	var path = d3.geoPath().projection(projection);
+	
+	d3.queue()
+	    .defer(d3.json, "data/countries.json")
+	    .defer(d3.json, "data/cities_all.json")
+	    .await(ready);
+	
+	function ready(error, countries, cities) {
+		
+		d3.select("#map")
+			.append("g")
+			  .attr("class", "countries")
+			.append("path")
+		      .datum(topojson.feature(countries, countries.objects.countries))
+		      .attr("d", path);
+	
+		d3.select("#map")
+			.selectAll("circle")
+			  .data(cities.features)
+			.enter()
+			  .append("circle")
+			  .attr("class", "citycircle")
+			  .attr("id", function(d){return "circle"+d.properties.geocode})
+			  .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+			  .attr("r", function(d) { return radius(d.properties[2000]); })
+			  .on("mouseover", function(d){
+				  d3.selectAll(".citycircle").style("stroke-width", "1px");
+				  d3.select(this).style("stroke-width","4px");
+				  d3.select(".cityname").text(d.properties.city);
+			  })
+	};
+
+	d3.select("#map")
+		.append("text")
+		.attr("class", "cityname")
+		.attr("x", 100)
+		.attr("y", 300)
+		.text(" ");
+
+	function updateData(year) {
+		d3.selectAll(".citycircle")
+		.transition().duration(1000)
+		.attr("r", function(d) {return radius(d.properties[year]);})
+	}
 
 </script>
 </body>
