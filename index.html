@@ -15,20 +15,16 @@ body {
 
 .countries {
 	fill: #ddd;
-  stroke-width:.5px;
+    stroke-width:.5px;
 	stroke: #555;
 }
 
 .citycircle {
-  fill: #E84D0E;
-  fill-opacity: .3;
+    fill: #E84D0E;
+    fill-opacity: .3;
 	stroke: #E84D0E;
 	cursor: crosshair;
-  stroke-width:1px;
-}
-
-.citypopulation {
-	font-size: 20px;
+    stroke-width:1px;
 }
 
 button {
@@ -61,12 +57,10 @@ button {
 	var w = 1220,
 			h = 600,
 			margins = {top: 10, right: 10, bottom: 20, left: 10},
-
-			scale = 180, //projection scale
 			radiusscale = 30;		
 
 	var radius = d3.scaleSqrt() //Used to scale the size of proportional circles on the map.
-	    .domain([0, 34250])
+	    .domain([0, 30000])
 	    .range([0, radiusscale]);
 
 	d3.select("body")
