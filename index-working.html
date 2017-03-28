@@ -75,7 +75,7 @@ button {
 		  .attr("height", h)
 		    .attr("transform", "translate("+ margins.left +", "+margins.top+")");
 
-	var projection = d3.geoMercator();
+	var projection = d3.geoMollweide();
 		  
 	var path = d3.geoPath().projection(projection);
 	
